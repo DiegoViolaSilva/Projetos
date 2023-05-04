@@ -3,17 +3,18 @@
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = (isset($_POST["id"]) && $_POST["id"] != null) ? $_POST["id"] : "";
     $nome_do_produto = (isset($_POST["nome_do_produto"]) && $_POST["nome_do_produto"] != null) ? $_POST["nome_do_produto"] : "";
-    $preço = (isset($_POST["preço"]) && $_POST["preço"] != null) ? $_POST["preço"] : "";
-    $descrição = (isset($_POST["descrição"]) && $_POST["descrição"] != null) ? $_POST["descrição"] : NULL;
+    $preco = (isset($_POST["preco"]) && $_POST["preco"] != null) ? $_POST["preco"] : "";
+    $descricao = (isset($_POST["descricao"]) && $_POST["descricao"] != null) ? $_POST["descricao"] : NULL;
 } else if (!isset($id)) {   
     $id = (isset($_GET["id"]) && $_GET["id"] != null) ? $_GET["id"] : "";
     $nome_do_produto = NULL;
-    $preço = NULL;
-    $descrição = NULL;
+    $preco = NULL;
+    $descricao = NULL;
 }
 
+
 try {
-    $conexao = new PDO("mysql:host=localhost; dbname=cadastr", "root", "123456");
+    $conexao = new PDO("mysql:host=localhost; dbname=cadastr", "root");
     $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $conexao->exec("set names utf8");
 } catch (PDOException $erro) {
@@ -23,22 +24,22 @@ try {
 if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "save" && $nome_do_produto != "") {
     try {
         if ($id != "") {
-            $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preço=?, descrição=? WHERE id = ?");
+            $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preco=?,descricao=? WHERE id = ?");
             $stmt->bindParam(4, $id);
         } else {
-            $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preço, descrição) VALUES (?, ?, ?)");
+            $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descricao) VALUES (?, ?, ?)");
         }
         $stmt->bindParam(1, $nome_do_produto);
-        $stmt->bindParam(2, $preço);
-        $stmt->bindParam(3, $descrição);
+        $stmt->bindParam(2, $preco);
+        $stmt->bindParam(3, $descricao);
  
         if ($stmt->execute()) {
             if ($stmt->rowCount() > 0) {
                 echo "Dados cadastrados com sucesso!";
                 $id = null;
                 $nome_do_produto = null;
-                $preço = null;
-                $descrição = null;
+                $preco= null;
+                $descricao = null;
             } else {
                 echo "Erro ao tentar efetivar cadastro";
             }
@@ -51,38 +52,38 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "save" && $nome_do_produto !=
 }
  
 
-if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
-    try {
-        $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id = ?");
-        $stmt->bindParam(1, $id, PDO::PARAM_INT);
-        if ($stmt->execute()) {
-            $rs = $stmt->fetch(PDO::FETCH_OBJ);
-            $id = $rs->id;
-            $nome_do_produto = $rs->nome_do_produto;
-            $preço = $rs->preço;
-            $descrição = $rs->descrição;
-        } else {
-            throw new PDOException("Erro: Não foi possível executar a declaração sql");
-        }
-    } catch (PDOException $erro) {
-        echo "Erro: ".$erro->getMessage();
-    }
-}
+// if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
+//     try {
+//         $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id = ?");
+//         $stmt->bindParam(1, $id, PDO::PARAM_INT);
+//         if ($stmt->execute()) {
+//             $rs = $stmt->fetch(PDO::FETCH_OBJ);
+//             $id = $rs->id;
+//             $nome_do_produto = $rs->nome_do_produto;
+//             $preço = $rs->preço;
+//             $descrição = $rs->descrição;
+//         } else {
+//             throw new PDOException("Erro: Não foi possível executar a declaração sql");
+//         }
+//     } catch (PDOException $erro) {
+//         echo "Erro: ".$erro->getMessage();
+//     }
+// }
 
-if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
-    try {
-        $stmt = $conexao->prepare("DELETE FROM  produtos WHERE id = ?");
-        $stmt->bindParam(1, $id, PDO::PARAM_INT);
-        if ($stmt->execute()) {
-            echo "Registo foi excluído com êxito";
-            $id = null;
-        } else {
-            throw new PDOException("Erro: Não foi possível executar a declaração sql");
-        }
-    } catch (PDOException $erro) {
-        echo "Erro: ".$erro->getMessage();
-    }
-}
+// if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
+//     try {
+//         $stmt = $conexao->prepare("DELETE FROM  produtos WHERE id = ?");
+//         $stmt->bindParam(1, $id, PDO::PARAM_INT);
+//         if ($stmt->execute()) {
+//             echo "Registo foi excluído com êxito";
+//             $id = null;
+//         } else {
+//             throw new PDOException("Erro: Não foi possível executar a declaração sql");
+//         }
+//     } catch (PDOException $erro) {
+//         echo "Erro: ".$erro->getMessage();
+//     }
+// }
 ?>
 <!DOCTYPE html>
 <html lang ="pt-br">
@@ -121,12 +122,13 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
 
 <!-- ----------------------------------------------------------------------------------------------------------------- -->
 
-<form class="formulario" method="post" enctype="multipart/form-data">
-<form action="?act=save" method="POST" name="form1" >
+<!-- <form class="formulario" method="post" enctype="multipart/form-data"> -->
+<form  class="formulario" action="?act=save" method="POST" name="form1" >
 
   <h1 class="title"><i class="icon icon-mail-1"></i>Cadastro do Produto</h1> 
             <hr>
-            <input type="hidden" name="id" <?php
+            <input type="hidden" name="id"
+             <?php
             if (isset($id) && $id != null || $id != "") {
                 echo "value=\"{$id}\"";
             }
@@ -134,7 +136,8 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
           
             <label class="label">
             Nome do produto:
-            <input type="text" name="nome_do_produto" class="campo" placeholder="Digite seu nome" required="" <?php
+            <input type="text" name="nome_do_produto" class="campo" placeholder="Digite seu nome" required="" 
+            <?php
             if (isset($nome_do_produto) && $nome_do_produto != null || $nome_do_produto != ""){
                 echo "value=\"{$nome_do_produto}\"";
             }
@@ -143,26 +146,25 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
             </label>
             <label class="label">
             Preço:
-            <input type="text" name="preço" class="campo" placeholder="R$--/--" required=""<?php
-            if (isset($preço) && $preço!= null || $preço != ""){
-                echo "value=\"{$preço}\"";
+            <input type="text" name="preco" class="campo" placeholder="R$--/--" required=""
+            <?php
+            if (isset($preco) && $preco!= null || $preco != ""){
+                echo "value=\"{$preco}\"";
             }
             ?> />
 
              </label>
             <label class="label">
             Descrição:
-            <textarea name="descrição" class="campo" placeholder="Descrição do produto" required=""<?php
-            if (isset($descrição) && $descrição!= null || $descrição != ""){
-                echo "value=\"{$descrição}\"";
+            <textarea name="descricao" class="campo" placeholder="DescriÇão do produto" required=""
+            <?php
+            if (isset($descricao) && $descricao!= null || $descricao != ""){
+                echo "value=\"{$descricao}\"";
             }
             ?>></textarea>
 
           
         </label>
-
-       
-    <!-- i dont go home -->
 
           <label class="label">
 
@@ -171,6 +173,8 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
            <hr>
           </label>
         </form>
+
+          </table>
 
 <br> <br>
       <footer>
