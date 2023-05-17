@@ -1,10 +1,53 @@
+<?php
+
+require_once "conexao.php";
+
+
+if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
+  try {
+      $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id = ?");
+      $stmt->bindParam(1, $id, PDO::PARAM_INT);
+      if ($stmt->execute()) {
+          $rs = $stmt->fetch(PDO::FETCH_OBJ);
+          $id = $rs->id;
+          $nome = $rs->nome;
+          $email = $rs->email;
+          $celular = $rs->celular;
+      } else {
+          throw new PDOException("Erro: Não foi possível executar a declaração sql");
+      }
+  } catch (PDOException $erro) {
+      echo "Erro: ".$erro->getMessage();
+  }
+}
+
+if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
+  try {
+      $stmt = $conexao->prepare("DELETE FROM produtos WHERE id = ?");
+      $stmt->bindParam(1, $id, PDO::PARAM_INT);
+      if ($stmt->execute()) {
+          echo "Registo foi excluído com êxito";
+          $id = null;
+      } else {
+          throw new PDOException("Erro: Não foi possível executar a declaração sql");
+      }
+  } catch (PDOException $erro) {
+      echo "Erro: ".$erro->getMessage();
+  }
+}
+
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang ="pt-br">
  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1 ">
     <title>Produtos</title>
-    <link rel="stylesheet" type="text/css" href="css/footer.css">
+    <link rel="stylesheet" type="text/css" href="sei.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 </head >
 <style>
@@ -47,79 +90,35 @@ tr:nth-child(even){background-color: #f2f2f2}
     </nav>  
 <br>
 <!-- ------------------------------------------------------------------------------------------ -->
-  <table>
-    <tr>
-      <th>Produto</th>
-      <th>Id</th>
-      <th>Correção</th>
-    </tr>
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button type="button" class="btn btn-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top"  data-bs-content="Top popover">✕</button></td>
-    </tr>
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button>✕</button></td>
-    </tr>
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button>✕</button></td>
-    </tr>
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button>✕</button></td>
-    </tr>
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button>✕</button></td>
-    </tr>
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button>✕</button></td>
-    </tr> 
-    
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button>✕</button></td>
-    </tr>
-   
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button>✕</button></td>
-    </tr>
-
-     <tr>
-      <td>...</td>
-      <td>...</td>
-      <td><button>✓</button>       
-        <button>?</button> 
-        <button>✕</button></td>
-    </tr>
-  </table>
+<table>
+                <tr>
+                    <th>Nome do Produto</th>
+                    <th>Preço</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+                <?php
+ 
+             
+                try {
+                    $stmt = $conexao->prepare("SELECT * FROM produtos");
+                    if ($stmt->execute()) {
+                        while ($rs = $stmt->fetch(PDO::FETCH_OBJ)) {
+                            echo "<tr>";
+                            echo "<td>".$rs->nome_do_produto ."</td><td>".$rs->preco."</td><td>".$rs->descricao
+                                       ."</td><td><center><a href=\"?act=upd&id=".$rs->id."\">[Alterar]</a>"
+                                       ."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                                       ."<a href=\"?act=del&id=".$rs->id."\">[Excluir]</a></center></td>";
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "Erro: Não foi possível recuperar os dados do banco de dados";
+                    }
+                } catch (PDOException $erro) {
+                    echo "Erro: ".$erro->getMessage();
+                }
+                ?>
+            </table>
   <!-- -------------------------------------------------------------------------------------------------------- -->
   <br> <br>
 

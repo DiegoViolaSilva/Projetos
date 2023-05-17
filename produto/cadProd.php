@@ -1,4 +1,5 @@
 <?php
+include "conexao.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = (isset($_POST["id"]) && $_POST["id"] != null) ? $_POST["id"] : "";
@@ -12,15 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $descricao = NULL;
 }
 
-
-try {
-    $conexao = new PDO("mysql:host=localhost; dbname=cadastr", "root");
-    $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $conexao->exec("set names utf8");
-} catch (PDOException $erro) {
-    echo "Erro na conexão:".$erro->getMessage();
-}     
-                                                              
+                                                    
 if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "save" && $nome_do_produto != "") {
     try {
         if ($id != "") {
@@ -51,39 +44,6 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "save" && $nome_do_produto !=
     }
 }
  
-
-// if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
-//     try {
-//         $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id = ?");
-//         $stmt->bindParam(1, $id, PDO::PARAM_INT);
-//         if ($stmt->execute()) {
-//             $rs = $stmt->fetch(PDO::FETCH_OBJ);
-//             $id = $rs->id;
-//             $nome_do_produto = $rs->nome_do_produto;
-//             $preço = $rs->preço;
-//             $descrição = $rs->descrição;
-//         } else {
-//             throw new PDOException("Erro: Não foi possível executar a declaração sql");
-//         }
-//     } catch (PDOException $erro) {
-//         echo "Erro: ".$erro->getMessage();
-//     }
-// }
-
-// if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
-//     try {
-//         $stmt = $conexao->prepare("DELETE FROM  produtos WHERE id = ?");
-//         $stmt->bindParam(1, $id, PDO::PARAM_INT);
-//         if ($stmt->execute()) {
-//             echo "Registo foi excluído com êxito";
-//             $id = null;
-//         } else {
-//             throw new PDOException("Erro: Não foi possível executar a declaração sql");
-//         }
-//     } catch (PDOException $erro) {
-//         echo "Erro: ".$erro->getMessage();
-//     }
-// }
 ?>
 <!DOCTYPE html>
 <html lang ="pt-br">
