@@ -1,27 +1,28 @@
 <?php
 
-require_once "conexao.php";
+include "conexao.php";
+$id = (isset($_GET["id"]) && $_GET["id"] != null) ? $_GET["id"] : "";                                               
+
+// if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
+//   try {
+//       $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id = ?");
+//       $stmt->bindParam(1, $id, PDO::PARAM_INT);
+//       if ($stmt->execute()) {
+//           $rs = $stmt->fetch(PDO::FETCH_OBJ);
+//           $id = $rs->id;
+//           $nome_do_produto = $rs->nome_do_produto;
+//           $preco = $rs->preco;
+//           $descricao = $rs->descricao;
+//       } else {
+//           throw new PDOException("Erro: Não foi possível executar a declaração sql");
+//       }
+//   } catch (PDOException $erro) {
+//       echo "Erro: ".$erro->getMessage();
+//   }
+// }
 
 
-if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
-  try {
-      $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id = ?");
-      $stmt->bindParam(1, $id, PDO::PARAM_INT);
-      if ($stmt->execute()) {
-          $rs = $stmt->fetch(PDO::FETCH_OBJ);
-          $id = $rs->id;
-          $nome = $rs->nome;
-          $email = $rs->email;
-          $celular = $rs->celular;
-      } else {
-          throw new PDOException("Erro: Não foi possível executar a declaração sql");
-      }
-  } catch (PDOException $erro) {
-      echo "Erro: ".$erro->getMessage();
-  }
-}
-
-if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
+  if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "" ) {
   try {
       $stmt = $conexao->prepare("DELETE FROM produtos WHERE id = ?");
       $stmt->bindParam(1, $id, PDO::PARAM_INT);
@@ -35,9 +36,6 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
       echo "Erro: ".$erro->getMessage();
   }
 }
-
-
-
 
 ?>
 
@@ -98,7 +96,6 @@ tr:nth-child(even){background-color: #f2f2f2}
                     <th>Ações</th>
                 </tr>
                 <?php
- 
              
                 try {
                     $stmt = $conexao->prepare("SELECT * FROM produtos");
@@ -106,10 +103,11 @@ tr:nth-child(even){background-color: #f2f2f2}
                         while ($rs = $stmt->fetch(PDO::FETCH_OBJ)) {
                             echo "<tr>";
                             echo "<td>".$rs->nome_do_produto ."</td><td>".$rs->preco."</td><td>".$rs->descricao
-                                       ."</td><td><center><a href=\"?act=upd&id=".$rs->id."\">[Alterar]</a>"
+                                       ."</td><td><center><a href= \" editor.php ?act=upd&id=".$rs->id."\">[Alterar]</a>"
                                        ."&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
                                        ."<a href=\"?act=del&id=".$rs->id."\">[Excluir]</a></center></td>";
                             echo "</tr>";
+                            
                         }
                     } else {
                         echo "Erro: Não foi possível recuperar os dados do banco de dados";
