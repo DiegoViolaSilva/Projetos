@@ -1,19 +1,18 @@
 <?php
 
-include "conexao.php";
+include "conexa.php";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $id = (isset($_POST["id"]) && $_POST["id"] != null) ? $_POST["id"] : "";
   $nome_do_produto = (isset($_POST["nome_do_produto"]) && $_POST["nome_do_produto"] != null) ? $_POST["nome_do_produto"] : "";
   $preco = (isset($_POST["preco"]) && $_POST["preco"] != null) ? $_POST["preco"] : "";
-  $descricao = (isset($_POST["descricao"]) && $_POST["descricao"] != null) ? $_POST["descricao"] : NULL;
+  $descriao = (isset($_POST["descriao"]) && $_POST["descriao"] != null) ? $_POST["descriao"] : NULL;
 } else if (!isset($id)) {   
   $id = (isset($_GET["id"]) && $_GET["id"] != null) ? $_GET["id"] : "";
   $nome_do_produto = NULL;
   $preco = NULL;
-  $descricao = NULL;
+  $descriao = NULL;
 }
 
-  
 
 
 if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
@@ -25,7 +24,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
       $id = $rs->id;
       $nome_do_produto = $rs->nome_do_produto;
       $preco = $rs->preco;
-      $descricao = $rs->descricao;
+      $descriao= $rs->descriao;
     } else {
       throw new PDOException("Erro: Não foi possível executar a declaração sql");
     }
@@ -37,16 +36,30 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
 if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "save" && $nome_do_produto != "") {
   try {
     if ($id != "") {
-      $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preco=?,descricao=? WHERE id = ?");
+      $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preco=?,descriao=? WHERE id = ?");
       $stmt->bindParam(4, $id);
     } else {
-      $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descricao) VALUES (?, ?, ?)");
+  
+      $nome_imagem = $_FILES['imagem']['name'];
+
+      $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descriao,imagem) VALUES (?, ?, ?,?)");
     }
     $stmt->bindParam(1, $nome_do_produto);
     $stmt->bindParam(2, $preco);
-    $stmt->bindParam(3, $descricao);
+    $stmt->bindParam (3, $descriao);
+    $stmt->bindParam (4, $nome_imagem);
 
     if ($stmt->execute()) {
+
+      $ultimo_id = $conexao->lastInsertId();
+  
+          //Diretório onde o arquivo vai ser salvo
+          $diretorio = 'imagens/' . $ultimo_id.'/';
+  
+          //Criar a pasta de foto 
+          mkdir($diretorio, 0755);
+          move_uploaded_file($_FILES['imagem']['tmp_name'], $diretorio.$nome_imagem);
+
       if ($stmt->rowCount() > 0) {
 
         // echo '<script type="text/javascript">'; 
@@ -65,7 +78,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "save" && $nome_do_produto !=
         $id = null;
         $nome_do_produto = null;
         $preco = null;
-        $descricao = null;
+        $descriao = null;
       } else {
         echo "Erro ao tentar efetivar cadastro";
       }
@@ -75,6 +88,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "save" && $nome_do_produto !=
   } catch (PDOException $erro) {
     echo "Erro: " . $erro->getMessage();
   }
+
 }
 
 if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
@@ -108,6 +122,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
 
 </head>
 
+
 <style>
   #div2 {
     white-space: nowrap;
@@ -116,8 +131,6 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
     text-overflow: ellipsis;
 
   }
-
-
 
   table {
     border-collapse: collapse;
@@ -140,7 +153,11 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
 
   tr:nth-child(even) {
     background-color: #f2f2f2
+    
   }
+
+
+
 </style>
 <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
@@ -242,12 +259,21 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
               </div>
               <div class="form-group">
                 <label for="message-text" class="control-label">Descrição:  </label> 
-                <textarea name="descricao" class="form-control" <?php
-                                                                if (isset($descricao) && $descricao != null || $descricao != "") {
-                                                                  echo "value=\"{$descricao}\"";
+                <textarea name="descriao" class="form-control" <?php
+                                                                if (isset($descriao) && $descriao != null || $descriao != "") {
+                                                                  echo "value=\"{$descriao}\"";
                                                                 }
                                                                 ?>></textarea>
              
+              </div>
+              <div id="img-container" class="form-group" >
+              <img id="preview" src=""  heigth= 50% width = 50%>
+              </div>
+              <div>
+
+              <label>Imagem</label>
+              <input  id="img-input" type="file" name="imagem"><br><br>
+          
               </div>
               <div class="modal-footer">
              
@@ -284,7 +310,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
                 <td><?php echo $rs->preco; ?></td>
                 <td>
                   <div id="div2">
-                    <?php echo $rs->descricao; ?>
+                    <?php echo $rs->descriao; ?>
                   </div>
 
                 </td>
@@ -292,7 +318,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
 
                   <button type="button" class="btn btn btn-primary" data-toggle="modal" data-target="#myModal<?php echo $rs->id; ?>"><i class="bi bi-search"></i></button>
 
-                  <button type="button" class="btn btn btn-warning" data-toggle="modal" data-target="#exampleModal" data-whatever="<?php echo $rs->id; ?>" data-whatevernome="<?php echo $rs->nome_do_produto; ?>" data-whateverpreco="<?php echo $rs->preco; ?>" data-whateverdescricao="<?php echo $rs->descricao; ?>"><i class="bi bi-pencil"></i></button>
+                  <button type="button" class="btn btn btn-warning" data-toggle="modal" data-target="#exampleModal" data-whatever="<?php echo $rs->id; ?>" data-whatevernome="<?php echo $rs->nome_do_produto; ?>" data-whateverpreco="<?php echo $rs->preco; ?>" data-whateverdescriao="<?php echo $rs->descriao; ?>"><i class="bi bi-pencil"></i></button>
 
                   <a href="?act=del&id=<?php echo $rs->id; ?>"><button type="button" class="btn btn btn-danger"><i class="bi bi-trash"></i></button></a>
 
@@ -318,7 +344,13 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
 
                       <h4><strong> Descrição: </strong></h4>
 
-                      <p><?php echo $rs->descricao; ?></p>
+                      <p><?php echo $rs->descriao; ?></p>
+
+                      <h4><strong> Imagem: </strong></h4>
+                      <div  id="img-container" >
+                      <img src="imagens/<?php echo $rs->id; ?>/<?php echo $rs->imagem; ?> " heigth= 50% width = 50% >
+                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -349,7 +381,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
               </div>
               <div class="form-group">
                 <label for="message-text" class="control-label">Descrição:</label>
-                <textarea name="descricao" class="form-control" id="descricao-text"></textarea>
+                <textarea name="descricao" class="form-control" id="descriao-text"></textarea>
               </div>
               <input name="id" type="hidden" id="id_produto"<?php
                                               if (isset($id) && $id != null || $id != "") {
@@ -442,6 +474,18 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
       modal.find('#descricao-text').val(recipientdescricao)
     })
   </script>
+  <script>
+  function readImage() {
+    if (this.files && this.files[0]) {
+        var file = new FileReader();
+        file.onload = function(e) {
+            document.getElementById("preview").src = e.target.result;
+        };       
+        file.readAsDataURL(this.files[0]);
+    }
+}
+document.getElementById("img-input").addEventListener("change", readImage, false);
+</script>
 </body>
 
 </html>

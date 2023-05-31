@@ -5,5 +5,6 @@ try {
     $conexao->exec("set names utf8");
 } catch (PDOException $erro) {
     echo "Erro na conexão:".$erro->getMessage();
-}     
-?>
+}    
+
+?> 
