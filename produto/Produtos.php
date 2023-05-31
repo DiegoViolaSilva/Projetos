@@ -33,15 +33,13 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
   }
 }
 
-if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "save" && $nome_do_produto != "") {
+if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
   try {
+    $nome_imagem = $_FILES['imagem']['name'];
     if ($id != "") {
-      $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preco=?,descriao=? WHERE id = ?");
+      $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preco=?,descriao=?, imagem= $nome_imagem  WHERE id = ?");
       $stmt->bindParam(4, $id);
     } else {
-  
-      $nome_imagem = $_FILES['imagem']['name'];
-
       $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descriao,imagem) VALUES (?, ?, ?,?)");
     }
     $stmt->bindParam(1, $nome_do_produto);
@@ -233,7 +231,8 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
             <h4 class="modal-title text-center" id="myModalLabel">Cadastrar Curso</h4>
           </div>
           <div class="modal-body">
-            <form method="POST" action="?act=save" enctype="multipart/form-data">
+            <form method="POST" action="" enctype="multipart/form-data">
+             <input type = "hidden" name ="act=save"> 
               <input type="hidden" name="id" <?php
                                               if (isset($id) && $id != null || $id != "") {
                                                 echo "value=\"{$id}\"";
@@ -370,7 +369,8 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
             <h4 class="modal-title" id="exampleModalLabel">Alteração de Produtos</h4>
           </div>
           <div class="modal-body">
-            <form method="POST" action="?act=save" enctype="multipart/form-data">
+            <form method="POST" action="" enctype="multipart/form-data">
+            <input type = "hidden" name ="act=save"> 
               <div class="form-group">
                 <label for="recipient-name" class="control-label">Nome:</label>
                 <input name="nome_do_produto" type="text" class="form-control" id="recipient-name">
