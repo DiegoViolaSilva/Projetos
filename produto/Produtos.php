@@ -37,8 +37,8 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
   try {
     $nome_imagem = $_FILES['imagem']['name'];
     if ($id != "") {
-      $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preco=?,descriao=?, imagem= $nome_imagem  WHERE id = ?");
-      $stmt->bindParam(4, $id);
+      $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preco=?,descriao=?, imagem= ?  WHERE id = ?");
+      $stmt->bindParam(5, $id);
     } else {
       $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descriao,imagem) VALUES (?, ?, ?,?)");
     }
@@ -49,6 +49,7 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
 
     if ($stmt->execute()) {
 
+      if ($id == ""){
       $ultimo_id = $conexao->lastInsertId();
   
           //Diretório onde o arquivo vai ser salvo
@@ -57,7 +58,11 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
           //Criar a pasta de foto 
           mkdir($diretorio, 0755);
           move_uploaded_file($_FILES['imagem']['tmp_name'], $diretorio.$nome_imagem);
+      } else {
+        $diretorio = 'imagens/' . $id.'/';
 
+        move_uploaded_file($_FILES['imagem']['tmp_name'], $diretorio.$nome_imagem);        
+      }
       if ($stmt->rowCount() > 0) {
 
         // echo '<script type="text/javascript">'; 
@@ -227,7 +232,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            
             <h4 class="modal-title text-center" id="myModalLabel">Cadastrar Curso</h4>
           </div>
           <div class="modal-body">
@@ -276,9 +281,10 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
               </div>
               <div class="modal-footer">
              
-             <input type="submit" class="btn btn-primary" value="salvar"/>
-            <input type="reset" value="Novo"  class ="btn btn-danger"/>
-           <hr>
+             <input type="submit" class="btn btn-success" value="salvar"/>
+            <input type="reset" value="Resetar"  class ="btn btn-warning"/>
+            <button type="button"  class ="btn btn-danger" data-dismiss="modal">Close</button>
+          
          
               </div>
             </form>
@@ -303,7 +309,10 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
             <?php
             $stmt = $conexao->prepare("SELECT * FROM produtos");
             ($stmt->execute());
-            while ($rs = $stmt->fetch(PDO::FETCH_OBJ)) { ?>
+            while ($rs = $stmt->fetch(PDO::FETCH_OBJ)) { 
+              $diretorio = 'imagens/'.$rs->id.'/'.$rs->imagem;
+              
+              ?>
               <tr>
                 <td><?php echo $rs->nome_do_produto; ?></td>
                 <td><?php echo $rs->preco; ?></td>
@@ -328,8 +337,8 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                      <h3 class="modal-title text-center" id="myModalLabel"><strong><?php echo  $rs->nome_do_produto; ?></strong></h3>
+                      <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+                    <h3 class="modal-title text-center" id="myModalLabel"><strong><?php echo  $rs->nome_do_produto; ?></strong></h3>
                     </div>
                     <div class="modal-body">
 
@@ -347,8 +356,13 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
 
                       <h4><strong> Imagem: </strong></h4>
                       <div  id="img-container" >
-                      <img src="imagens/<?php echo $rs->id; ?>/<?php echo $rs->imagem; ?> " heigth= 50% width = 50% >
+                     
+                      <img src="<?php echo $diretorio;?>" heigth= 50% width = 50% > 
                       </div>
+
+                    </div>
+                    <div class ="modal-footer">
+                    <button type="button"  class ="btn btn-danger" data-dismiss="modal">Close</button>
 
                     </div>
                   </div>
@@ -365,7 +379,7 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
             <h4 class="modal-title" id="exampleModalLabel">Alteração de Produtos</h4>
           </div>
           <div class="modal-body">
@@ -381,8 +395,19 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
               </div>
               <div class="form-group">
                 <label for="message-text" class="control-label">Descrição:</label>
-                <textarea name="descricao" class="form-control" id="descriao-text"></textarea>
+                <textarea name="descriao" class="form-control" id="descriao-text"></textarea>
+                </div>
+              <div id="img-container" class="form-group" >
+               <img id="preview" src=""  heigth= 50% width = 50%>
               </div>
+              <div>
+              </div class="form-group">
+              <label for="message-text" class="control-label">Imagem:</label>
+
+              <input  id="img-input" type="file" name="imagem" class="form-control">
+
+              <div>
+
               <input name="id" type="hidden" id="id_produto"<?php
                                               if (isset($id) && $id != null || $id != "") {
                                                 echo "value=\"{$id}\"";
@@ -391,8 +416,9 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
               <div class="modal-footer">
                 <label class="label">
         
-                <input type="submit"class="btn btn-danger"  value="Alterar"  />
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</button>
+                <input type="submit"class="btn btn-success"  value="Alterar"  />
+                <input type="reset" value="Resetar"  class ="btn btn-warning"/>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
                 </label>
               </div>
             </form>
@@ -401,9 +427,8 @@ if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "del" && $id != "") {
       </div>
     </div>
     <!-- Fim Modal Alterar -->
-
-
   </div>
+ </div>
   <!-- MAIN -->
   <footer>
     <div class="container">
