@@ -91,7 +91,6 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
   } catch (PDOException $erro) {
     echo "Erro: " . $erro->getMessage();
   }
- 
 }
 
 if (isset($_REQUEST["act=del"]) && $id != "") {
@@ -119,12 +118,12 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   <meta name="viewport" content="width=device-width, initial-scale=1 ">
   <title>Produtos</title>
   <link rel="stylesheet" type="text/css" href="sei.css">
-  <link href="css/bootstrap.min.css" rel="stylesheet">
-  <link href="js/bootstrap.mim.js" rel="styleshhet">
+  <!-- <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="js/bootstrap.mim.js" rel="styleshhet"> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
 </head>
-
 
 <style>
   #div2 {
@@ -137,28 +136,28 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   }
 
   #p {
-    border: 1px solid gray;
-    width: 15%;
+    border: 1px solid #d6d6d6;
+    width: 25%;
   }
 
   #p2 {
-    border: 1px solid gray;
-    width: 60%;
+    border: 1px solid #d6d6d6;
+    width: 100%;
 
   }
 
   .img {
-    left: 300px;
+    left: 200px;
     position: absolute;
 
-    
+
   }
 
   #bord {
-    border: 2px solid black;
+    border: 1px solid black;
     outline-style: double;
-    height: 65%;
-    width: 65%;
+    height: 40%;
+    width: 40%;
   }
 
   /* ------------------------------------------------- */
@@ -192,7 +191,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
 
   #tam {
     margin-top: 3%;
-    left: 300px;
+    left: 200px;
     position: absolute;
   }
 
@@ -210,54 +209,47 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
 
 <body>
   <!-- barra de pesquisa -->
-
-  <nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary" class=" bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
+      <a class="navbar-brand" href="index.php">Lojinha</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">Lojinha</a>
-      </div>
-
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-        <!-- <button type="button" class="btn btn-default navbar-btn">Cadastro</button> -->
-
-        <form class="navbar-form navbar-right">
-          <div class="form-group">
-            <button type="button" class="btn btn-default navbar-btn">Entrar</button>
-          </div>
+        </ul>
+        <form class="d-flex" role="search">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="user/login.php">entrar</a>
+            </li>
         </form>
-
-      </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+      </div>
+    </div>
   </nav>
 
   <!-- barra de pesquisa -->
-
-
+ 
   <!-- MAIN -->
   <div class="container theme-showcase" role="main">
     <div class="page-header">
       <h1>Produtos</h1>
     </div>
 
-    <div class="pull-right">
-      <button type="button" class="btn btn-lg btn-success" data-toggle="modal" data-target="#myModalcad">Cadastrar</button>
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+      <button type="button" class="btn btn-success btn-lg me-md-2" data-bs-toggle="modal" data-bs-target="#Card">
+        Cadastrar
+      </button>
     </div>
+
+
     <!-- Inicio Modal -->
-    <div class="modal fade" id="myModalcad" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-      <div class="modal-dialog" role="document">
+    <div class="modal fade" id="Card" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">Cadastro de produtos</h1>
 
-            <h4 class="modal-title text-center" id="myModalLabel">Cadastrar Produto</h4>
           </div>
           <div class="modal-body">
             <form method="POST" action="" enctype="multipart/form-data">
@@ -310,17 +302,22 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
               </div>
               <div class="modal-footer">
 
-                <input type="submit" class="btn btn-success" value="salvar" />
-                <input type="reset" value="Resetar" class="btn btn-warning" />
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 
 
               </div>
-            </form>
+
           </div>
+          <div class="modal-footer">
+
+            <input type="submit" class="btn btn-success" value="salvar" />
+            <input type="reset" value="Resetar" class="btn btn-warning" />
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+          </form>
         </div>
       </div>
     </div>
+
     <!-- Fim Modal -->
 
     <div class="row">
@@ -352,21 +349,21 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
 
                 </td>
                 <td>
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal<?php echo $rs->id; ?>"><i class="bi bi-search"></i></button>
 
-                  <button type="button" class="btn btn btn-primary" data-toggle="modal" data-target="#myModal<?php echo $rs->id; ?>"><i class="bi bi-search"></i></button>
+                  <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" data-whatever="<?php echo $rs->id; ?>" data-whatevernome="<?php echo $rs->nome_do_produto; ?>" data-whateverpreco="<?php echo $rs->preco; ?>" data-whateverdescriao="<?php echo $rs->descriao; ?>"><i class="bi bi-pencil"></i></button>
 
-                  <button type="button" class="btn btn btn-warning" data-toggle="modal" data-target="#exampleModal" data-whatever="<?php echo $rs->id; ?>" data-whatevernome="<?php echo $rs->nome_do_produto; ?>" data-whateverpreco="<?php echo $rs->preco; ?>" data-whateverdescriao="<?php echo $rs->descriao; ?>"><i class="bi bi-pencil"></i></button>
-
-                  <button type="button" class="btn btn btn-danger" data-toggle="modal" data-target="#myModal01<?php echo $rs->id; ?>"><i class="bi bi-trash"></i></button>
+                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#Del<?php echo $rs->id; ?>"><i class="bi bi-trash"></i></button>
 
                 </td>
               </tr>
-              <!-- Inicio Modal Visualizar -->
-              <div class="modal fade" id="myModal<?php echo $rs->id; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
+
+              <!-- modal de visualização -->
+
+              <div class="modal fade" id="myModal<?php echo $rs->id; ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
                       <h3 class="modal-title text-center" id="myModalLabel"><strong><?php echo  $rs->nome_do_produto; ?></strong></h3>
                     </div>
                     <div class="modal-body">
@@ -374,92 +371,95 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
 
                         <div class=row>
                           <div id="img-container" class="img">
-                            <h4> <strong> Imagem: </strong> </h4>
+                            <h6> <strong> Imagem: </strong> </h6>
                             <img src="<?php echo $diretorio; ?>" id="bord">
                           </div>
                         </div>
 
                         <div class=row>
-                          <h4> <strong> Nome do Produto: </strong></h4>
+                          <h6> <strong> Nome: </strong></h6>
                           <p id="p"><?php echo $rs->nome_do_produto; ?></p>
                         </div>
                         <div class=row>
-                          <h4><strong> Preço: </strong></h4>
+                          <h6><strong> Preço: </strong></h6>
                           <p id="p"><?php echo $rs->preco; ?></p>
                         </div>
                         <div class=row>
-                          <h4> <strong> Descrição: </strong></h4>
+                          <h6> <strong> Descrição: </strong></h6>
                           <p id="p2"><?php echo $rs->descriao; ?> </p>
                         </div>
 
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <!-- Fim Modal Visualizar -->
-              <!-- Inicio Modal Deletar -->
-              <div class="modal fade" id="myModal01<?php echo $rs->id; ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
-                      <h3 class="modal-title text-center" id="myModalLabel"><strong>Deseja Deletar esse Produto?</strong></h3>
-                    </div>
-                    <div class="modal-body">
-                      <div class="container">
+                <!-- Fim Modal Visualizar -->
 
-                        <div class=row>
-                          <div id="img-container" class="img">
-                            <h4> <strong> Imagem: </strong> </h4>
-                            <img src="<?php echo $diretorio; ?>" id="bord">
+                <!-- Inicio Modal Deletar -->
+            
+       <!-- --------------------------------------------------------------------------- -->
+
+                  <!-- Fim do Modal Deletar -->
+                  <div class="modal fade" id="Del<?php echo $rs->id; ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="false">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h3 class="modal-title text-center" id="myModalLabel"><strong><?php echo  $rs->nome_do_produto; ?></strong></h3>
+                      </div>
+                      <div class="modal-body">
+                        <div class="container">
+
+                          <div class=row>
+                            <div id="img-container" class="img">
+                              <h6> <strong> Imagem: </strong> </h6>
+                              <img src="<?php echo $diretorio; ?>" id="bord">
+                            </div>
                           </div>
-                        </div>
 
-                        <div class=row>
-                          <h4> <strong> Nome do Produto: </strong></h4>
-                          <p id="p"><?php echo $rs->nome_do_produto; ?></p>
-                        </div>
-                        <div class=row>
-                          <h4><strong> Preço: </strong></h4>
-                          <p id="p"><?php echo $rs->preco; ?></p>
-                        </div>
+                          <div class=row>
+                            <h6> <strong> Nome: </strong></h6>
+                            <p id="p"><?php echo $rs->nome_do_produto; ?></p>
+                          </div>
+                          <div class=row>
+                            <h6><strong> Preço: </strong></h6>
+                            <p id="p"><?php echo $rs->preco; ?></p>
+                          </div>
+                          <div class=row>
+                            <h6> <strong> Descrição: </strong></h6>
+                            <p id="p2"><?php echo $rs->descriao; ?> </p>
+                          </div>
 
-                        <div class=row>
-                          <h4> <strong> Descrição: </strong></h4>
-                          <p id="p2"><?php echo $rs->descriao; ?> </p>
                         </div>
-                      </div>
+                        <div class="modal-footer">
+                          <form method="POST" action="" enctype="multipart/form-data">
 
-                      <div class="modal-footer">
-                        <form method="POST" action="" enctype="multipart/form-data">
-
-                          <input type="hidden" name="act=del">
-                          <input type="hidden" name="id" value=<?php echo $rs->id; ?> />
-                          <input type="submit" class="btn btn-success" value="Deletar" />
-                          <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
-                        </form>
+                            <input type="hidden" name="act=del">
+                            <input type="hidden" name="id" value=<?php echo $rs->id; ?> />
+                            
+                            <input type="submit" class="btn btn-success" value="Deletar"  />
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                          </form>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- Fim do Modal Deletar -->
-
-            <?php } ?>
+            
+                <?php } ?>
+                
           </tbody>
         </table>
       </div>
     </div>
     <!-- Inicio Modal Alterar -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
-      <div class="modal-dialog" role="document">
+    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
             <h4 class="modal-title" id="exampleModalLabel">Alteração de Produtos</h4>
           </div>
           <div class="modal-body">
@@ -468,7 +468,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
 
               <div class="form-group">
                 <div id="img-container" class="img">
-                <h6><strong>Imagem:</strong></h6>
+                  <h6><strong>Imagem:</strong></h6>
                   <img src="<?php echo $diretorio; ?>" id="bord">
                 </div>
               </div>
@@ -500,22 +500,19 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                                                               ?> />
               <div class="modal-footer">
                 <label class="label">
-
                   <input type="submit" class="btn btn-success" value="Alterar" />
                   <input type="reset" value="Resetar" class="btn btn-warning" />
-                  <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                 </label>
               </div>
-            </form>
           </div>
         </div>
       </div>
+      <!-- Fim Modal Alterar -->
+
+
+
     </div>
-    <!-- Fim Modal Alterar -->
-
-
-
-  </div>
   </div>
   <!-- MAIN -->
   <footer>
@@ -538,6 +535,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
     </div>
   </footer>
   <!-- Sei lá -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
