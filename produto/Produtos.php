@@ -91,7 +91,7 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
   } catch (PDOException $erro) {
     echo "Erro: " . $erro->getMessage();
   }
-
+ 
 }
 
 if (isset($_REQUEST["act=del"]) && $id != "") {
@@ -150,13 +150,15 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   .img {
     left: 300px;
     position: absolute;
+
+    
   }
 
   #bord {
     border: 2px solid black;
     outline-style: double;
-    height: 70%;
-    width: 70%;
+    height: 65%;
+    width: 65%;
   }
 
   /* ------------------------------------------------- */
@@ -187,12 +189,14 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   input[type="text"] {
     width: 35%;
   }
-  #tam{
-     margin-top: 3% ;
+
+  #tam {
+    margin-top: 3%;
     left: 300px;
     position: absolute;
   }
-  .heg{
+
+  .heg {
     border: 2px solid black;
     outline-style: double;
     height: 50%;
@@ -263,23 +267,23 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                                                 echo "value=\"{$id}\"";
                                               }
                                               ?> />
-            
+
               <!--ʕ•́ᴥ•̀ʔっ♡ -->
 
-              <div class="form-group" id= "tam">
-              <label>Imagem:</label>
+              <div class="form-group" id="tam">
+                <label>Imagem:</label>
                 <input id="img-input" type="file" name="imagem">
               </div><br>
-              <div class="form-group" id= "tam">
-             <br><br>
-              <div id="img-container" class="form-group">
-                 <img id="preview" class= "heg"  src="" >
-              </div>
+              <div class="form-group" id="tam">
+                <br><br>
+                <div id="img-container" class="form-group">
+                  <img id="preview" class="heg" src="">
+                </div>
               </div>
 
               <div class="form-group">
                 <label for="recipient-name" class="control-label">Nome do Produto: </label>
-                <input name="nome_do_produto" type="text" class="form-control"  <?php
+                <input name="nome_do_produto" type="text" class="form-control" <?php
                                                                                 if (isset($nome_do_produto) && $nome_do_produto != null || $nome_do_produto != "") {
                                                                                   echo "value=\"{$nome_do_produto}\"";
                                                                                 }
@@ -302,7 +306,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                                                                   echo "value=\"{$descriao}\"";
                                                                 }
                                                                 ?>></textarea>
-<!-- ✍(◔◡◔) -->
+                <!-- ✍(◔◡◔) -->
               </div>
               <div class="modal-footer">
 
@@ -352,6 +356,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                   <button type="button" class="btn btn btn-primary" data-toggle="modal" data-target="#myModal<?php echo $rs->id; ?>"><i class="bi bi-search"></i></button>
 
                   <button type="button" class="btn btn btn-warning" data-toggle="modal" data-target="#exampleModal" data-whatever="<?php echo $rs->id; ?>" data-whatevernome="<?php echo $rs->nome_do_produto; ?>" data-whateverpreco="<?php echo $rs->preco; ?>" data-whateverdescriao="<?php echo $rs->descriao; ?>"><i class="bi bi-pencil"></i></button>
+
                   <button type="button" class="btn btn btn-danger" data-toggle="modal" data-target="#myModal01<?php echo $rs->id; ?>"><i class="bi bi-trash"></i></button>
 
                 </td>
@@ -460,6 +465,14 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
           <div class="modal-body">
             <form method="POST" action="" enctype="multipart/form-data">
               <input type="hidden" name="act=save">
+
+              <div class="form-group">
+                <div id="img-container" class="img">
+                <h6><strong>Imagem:</strong></h6>
+                  <img src="<?php echo $diretorio; ?>" id="bord">
+                </div>
+              </div>
+
               <div class="form-group">
                 <label for="recipient-name" class="control-label">Nome:</label>
                 <input name="nome_do_produto" type="text" class="form-control" id="recipient-name">
