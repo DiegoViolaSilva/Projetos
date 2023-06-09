@@ -13,25 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $descriao = NULL;
 }
 
+error_reporting(0);
 
-
-if (isset($_REQUEST["act"]) && $_REQUEST["act"] == "upd" && $id != "") {
-  try {
-    $stmt = $conexao->prepare("SELECT * FROM produtos WHERE id = ?");
-    $stmt->bindParam(1, $id, PDO::PARAM_INT);
-    if ($stmt->execute()) {
-      $rs = $stmt->fetch(PDO::FETCH_OBJ);
-      $id = $rs->id;
-      $nome_do_produto = $rs->nome_do_produto;
-      $preco = $rs->preco;
-      $descriao = $rs->descriao;
-    } else {
-      throw new PDOException("Erro: Não foi possível executar a declaração sql");
-    }
-  } catch (PDOException $erro) {
-    echo "Erro: " . $erro->getMessage();
-  }
-}
 
 if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
   try {
@@ -39,8 +22,10 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
     if ($id != "") {
       $stmt = $conexao->prepare("UPDATE produtos SET nome_do_produto=?, preco=?,descriao=?, imagem= ?  WHERE id = ?");
       $stmt->bindParam(5, $id);
+      $metodo = "upd";
     } else {
-      $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descriao,imagem) VALUES (?, ?, ?,?)");
+      $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descriao,imagem) VALUES (?, ?, ?,?)"); 
+      $metodo = "cad";
     }
     $stmt->bindParam(1, $nome_do_produto);
     $stmt->bindParam(2, $preco);
@@ -65,25 +50,37 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
       }
       if ($stmt->rowCount() > 0) {
 
-        // echo '<script type="text/javascript">'; 
-        //  echo 'alert("Dados Alterados com sucesso!");'; 
-        //  echo 'window.location.href = "http://localhost/meus%20projetos/produto/produtos.php";';
-        //  echo '</script>';
-
-        echo '<script> $(function() {
-                          var toastElList = [].slice.call(document.querySelectorAll(".toast"))
-                          var toastList = toastElList.map(function(toastEl) {
-                          return new bootstrap.Toast(toastEl, option)
-                          })
-                         toastList.forEach(toast => toast.show())
-                          };
-                  </script>';
         $id = null;
         $nome_do_produto = null;
         $preco = null;
         $descriao = null;
+        if ($metodo == "upd"){
+          $alert_success = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <div>Alteração feita  com sucesso!</div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>';
+
+        }elseif ($metodo == "cad"){
+          $alert_success = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                              <div>Cadastro feito com sucesso!</div>
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>';
+        }
+        
       } else {
-        echo "Erro ao tentar efetivar cadastro";
+        
+          if ($metodo == "upd"){
+          $alert_error = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                              <div>Falha na aleteração do produto!</div>
+                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>';
+                        }
+             elseif ($metodo == "cad"){
+             $alert_error = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <div>Falha ao efetuar o cadastro!</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>';
+                        }
       }
     } else {
       throw new PDOException("Erro: Não foi possível executar a declaração sql");
@@ -98,10 +95,16 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
     $stmt = $conexao->prepare("DELETE FROM produtos WHERE id = ?");
     $stmt->bindParam(1, $id, PDO::PARAM_INT);
     if ($stmt->execute()) {
-      // echo "Registo foi excluído com êxito";
+      $alert_delet = '<div class="alert alert-dark alert-dismissible fade show" role="alert">
+                            <div>Produto deletado com sucesso </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                          </div>';
       $id = null;
     } else {
-      throw new PDOException("Erro: Não foi possível executar a declaração sql");
+      throw new PDOException(" $alert_error = '<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+      <div>Falha ao efetuar o cadastro!</div>
+      <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+    </div>");
     }
   } catch (PDOException $erro) {
     echo "Erro: " . $erro->getMessage();
@@ -173,7 +176,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   td {
     padding: 10px;
     text-align: left;
-    border-bottom: 1px solid #d4d4d4;
+    border-bottom: 1px solid #404040;
   }
 
   td button {
@@ -181,7 +184,9 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   }
 
   tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color:#e3e1e1;
+    /* #f2f2f2 */
+    /* #cfcccc */
   }
 
   /*-------------------------------------------------------------  */
@@ -190,16 +195,16 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   }
 
   #tam {
-    margin-top: 3%;
-    left: 200px;
+    left: 275px;
     position: absolute;
+    margin-bottom: 10%;
   }
 
   .heg {
     border: 2px solid black;
     outline-style: double;
-    height: 50%;
-    width: 50%;
+    height: 75%;
+    width: 75%;
   }
 
 
@@ -229,7 +234,12 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   </nav>
 
   <!-- barra de pesquisa -->
- 
+  <?php
+     echo $alert_delet ;
+      echo $alert_error;
+      echo $alert_success;
+  ?>
+
   <!-- MAIN -->
   <div class="container theme-showcase" role="main">
     <div class="page-header">
@@ -263,11 +273,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
               <!--ʕ•́ᴥ•̀ʔっ♡ -->
 
               <div class="form-group" id="tam">
-                <label>Imagem:</label>
-                <input id="img-input" type="file" name="imagem">
-              </div><br>
-              <div class="form-group" id="tam">
-                <br><br>
+                <br>
                 <div id="img-container" class="form-group">
                   <img id="preview" class="heg" src="">
                 </div>
@@ -300,6 +306,15 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                                                                 ?>></textarea>
                 <!-- ✍(◔◡◔) -->
               </div>
+
+
+
+              <br>
+              <div class="form-group" >
+                <label>Imagem:</label>
+                <input id="img-input" type="file" name="imagem" >
+              </div>
+
               <div class="modal-footer">
 
 
@@ -349,7 +364,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
 
                 </td>
                 <td>
-                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal<?php echo $rs->id; ?>"><i class="bi bi-search"></i></button>
+                  <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#myModal<?php echo $rs->id; ?>"><i class="bi bi-search"></i></button>
 
                   <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" data-whatever="<?php echo $rs->id; ?>" data-whatevernome="<?php echo $rs->nome_do_produto; ?>" data-whateverpreco="<?php echo $rs->preco; ?>" data-whateverdescriao="<?php echo $rs->descriao; ?>"><i class="bi bi-pencil"></i></button>
 
@@ -397,60 +412,57 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                   </div>
                 </div>
               </div>
-                <!-- Fim Modal Visualizar -->
+              <!-- Fim Modal Visualizar -->
 
-                <!-- Inicio Modal Deletar -->
-            
-       <!-- --------------------------------------------------------------------------- -->
+              <!-- Inicio Modal Deletar -->
 
-                  <!-- Fim do Modal Deletar -->
-                  <div class="modal fade" id="Del<?php echo $rs->id; ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="false">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h3 class="modal-title text-center" id="myModalLabel"><strong><?php echo  $rs->nome_do_produto; ?></strong></h3>
+              <div class="modal fade" id="Del<?php echo $rs->id; ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="false">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h3 class="modal-title text-center" id="myModalLabel"><strong><?php echo  $rs->nome_do_produto; ?></strong></h3>
+                    </div>
+                    <div class="modal-body">
+                      <div class="container">
+
+                        <div class=row>
+                          <div id="img-container" class="img">
+                            <h6> <strong> Imagem: </strong> </h6>
+                            <img src="<?php echo $diretorio; ?>" id="bord">
+                          </div>
+                        </div>
+
+                        <div class=row>
+                          <h6> <strong> Nome: </strong></h6>
+                          <p id="p"><?php echo $rs->nome_do_produto; ?></p>
+                        </div>
+                        <div class=row>
+                          <h6><strong> Preço: </strong></h6>
+                          <p id="p"><?php echo $rs->preco; ?></p>
+                        </div>
+                        <div class=row>
+                          <h6> <strong> Descrição: </strong></h6>
+                          <p id="p2"><?php echo $rs->descriao; ?> </p>
+                        </div>
+
                       </div>
-                      <div class="modal-body">
-                        <div class="container">
+                      <div class="modal-footer">
+                        <form method="POST" action="" enctype="multipart/form-data">
 
-                          <div class=row>
-                            <div id="img-container" class="img">
-                              <h6> <strong> Imagem: </strong> </h6>
-                              <img src="<?php echo $diretorio; ?>" id="bord">
-                            </div>
-                          </div>
+                          <input type="hidden" name="act=del">
+                          <input type="hidden" name="id" value=<?php echo $rs->id; ?> />
 
-                          <div class=row>
-                            <h6> <strong> Nome: </strong></h6>
-                            <p id="p"><?php echo $rs->nome_do_produto; ?></p>
-                          </div>
-                          <div class=row>
-                            <h6><strong> Preço: </strong></h6>
-                            <p id="p"><?php echo $rs->preco; ?></p>
-                          </div>
-                          <div class=row>
-                            <h6> <strong> Descrição: </strong></h6>
-                            <p id="p2"><?php echo $rs->descriao; ?> </p>
-                          </div>
-
-                        </div>
-                        <div class="modal-footer">
-                          <form method="POST" action="" enctype="multipart/form-data">
-
-                            <input type="hidden" name="act=del">
-                            <input type="hidden" name="id" value=<?php echo $rs->id; ?> />
-                            
-                            <input type="submit" class="btn btn-success" value="Deletar"  />
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                          </form>
-                        </div>
+                          <input type="submit" class="btn btn-success" value="Deletar" />
+                          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        </form>
                       </div>
                     </div>
                   </div>
                 </div>
-            
-                <?php } ?>
-                
+            </div>
+              <!-- Fim do Modal Deletar -->
+            <?php } ?>
+
           </tbody>
         </table>
       </div>
@@ -492,7 +504,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                 <input id="img-input" type="file" name="imagem" class="form-control">
 
               </div>
-
+              <input type="hidden" name="act=upd">
               <input name="id" type="hidden" id="id_produto" <?php
                                                               if (isset($id) && $id != null || $id != "") {
                                                                 echo "value=\"{$id}\"";
@@ -500,9 +512,8 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                                                               ?> />
               <div class="modal-footer">
                 <label class="label">
-                  <input type="submit" class="btn btn-success" value="Alterar" />
-                  <input type="reset" value="Resetar" class="btn btn-warning" />
-                  <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                  <input type="submit" class="btn btn-success" value="Alterar"/>
+                  <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Cancelar</button>
                 </label>
               </div>
           </div>
@@ -534,8 +545,8 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
       </div>
     </div>
   </footer>
-  <!-- Sei lá -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+  <!-- Bootstrap javascript 5.3-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -569,6 +580,4 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
     }
     document.getElementById("img-input").addEventListener("change", readImage, false);
   </script>
-</body>
-
 </html>
