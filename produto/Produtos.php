@@ -24,7 +24,7 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
       $stmt->bindParam(5, $id);
       $metodo = "upd";
     } else {
-      $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descriao,imagem) VALUES (?, ?, ?,?)"); 
+      $stmt = $conexao->prepare("INSERT INTO produtos (nome_do_produto, preco, descriao,imagem) VALUES (?, ?, ?,?)");
       $metodo = "cad";
     }
     $stmt->bindParam(1, $nome_do_produto);
@@ -54,33 +54,30 @@ if (isset($_REQUEST["act=save"])  && $nome_do_produto != "") {
         $nome_do_produto = null;
         $preco = null;
         $descriao = null;
-        if ($metodo == "upd"){
+        if ($metodo == "upd") {
           $alert_success = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                                 <div>Alteração feita  com sucesso!</div>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>';
-
-        }elseif ($metodo == "cad"){
+        } elseif ($metodo == "cad") {
           $alert_success = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                               <div>Cadastro feito com sucesso!</div>
                               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>';
         }
-        
       } else {
-        
-          if ($metodo == "upd"){
+
+        if ($metodo == "upd") {
           $alert_error = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                               <div>Falha na aleteração do produto!</div>
                               <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                           </div>';
-                        }
-             elseif ($metodo == "cad"){
-             $alert_error = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+        } elseif ($metodo == "cad") {
+          $alert_error = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <div>Falha ao efetuar o cadastro!</div>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                           </div>';
-                        }
+        }
       }
     } else {
       throw new PDOException("Erro: Não foi possível executar a declaração sql");
@@ -120,7 +117,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1 ">
   <title>Produtos</title>
-  <link rel="stylesheet" type="text/css" href="sei.css">
+  <link rel="stylesheet" type="text/css" href="css/footer.css">
   <!-- <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="js/bootstrap.mim.js" rel="styleshhet"> -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
@@ -184,7 +181,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   }
 
   tr:nth-child(even) {
-    background-color:#e3e1e1;
+    background-color: #e3e1e1;
     /* #f2f2f2 */
     /* #cfcccc */
   }
@@ -216,17 +213,17 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
   <!-- barra de pesquisa -->
   <nav class="navbar navbar-expand-lg bg-body-tertiary" class=" bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.php">Lojinha</a>
+      <a class="navbar-brand" href="index.php"><i class="bi bi-basket"></i> Lojinha</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
 
         </ul>
         <form class="d-flex" role="search">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="user/login.php">entrar</a>
+              <a class="nav-link active" aria-current="page" href="index.php">Loja</a>
             </li>
         </form>
       </div>
@@ -235,9 +232,9 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
 
   <!-- barra de pesquisa -->
   <?php
-     echo $alert_delet ;
-      echo $alert_error;
-      echo $alert_success;
+  echo $alert_delet;
+  echo $alert_error;
+  echo $alert_success;
   ?>
 
   <!-- MAIN -->
@@ -310,9 +307,9 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
 
 
               <br>
-              <div class="form-group" >
+              <div class="form-group">
                 <label>Imagem:</label>
-                <input id="img-input" type="file" name="imagem" >
+                <input id="img-input" type="file" name="imagem">
               </div>
 
               <div class="modal-footer">
@@ -459,7 +456,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                     </div>
                   </div>
                 </div>
-            </div>
+              </div>
               <!-- Fim do Modal Deletar -->
             <?php } ?>
 
@@ -512,7 +509,7 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
                                                               ?> />
               <div class="modal-footer">
                 <label class="label">
-                  <input type="submit" class="btn btn-success" value="Alterar"/>
+                  <input type="submit" class="btn btn-success" value="Alterar" />
                   <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Cancelar</button>
                 </label>
               </div>
@@ -580,4 +577,5 @@ if (isset($_REQUEST["act=del"]) && $id != "") {
     }
     document.getElementById("img-input").addEventListener("change", readImage, false);
   </script>
+
 </html>

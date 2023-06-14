@@ -1,6 +1,8 @@
 <?php
 
 include "conexa.php";
+include "config.php";
+
 
 ?>
 
@@ -12,8 +14,8 @@ include "conexa.php";
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lojinha</title>
   <link rel="stylesheet" type="text/css" href="css/footer.css" />
-  <link rel="stylesheet" type="text/css" href="sei.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <style>
     .img {
       left: 200px;
@@ -46,6 +48,10 @@ include "conexa.php";
       height: 450px;
       object-fit: fill;
     }
+
+    #ri {
+      text-align: right;
+    }
   </style>
 </head>
 
@@ -53,20 +59,28 @@ include "conexa.php";
 
   <nav class="navbar navbar-expand-lg bg-body-tertiary" class=" bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.php">Lojinha</a>
+      <a class="navbar-brand" href="index.php"> <i class="bi bi-basket"></i> Lojinha</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+        <ul class="navbar-nav ">
 
+          <?php
+          session_start();
+          if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+            echo '<a class="nav-link active" aria-current="page" href="login.php">Entrar<i class="bi bi-person"></i></a>';
+          } else {
+            echo '<a class="nav-link active" aria-current="page" href="Produtos.php"><i class="bi bi-bag-plus"></i> Cadastrar</a>';
+            echo '</li>';
+            echo '<li class="nav-item">';
+            echo '<a class="nav-link active" aria-current="page" href="user.php"><i class="bi bi-person-circle"></i>
+            </a>';
+          }
 
+          ?>
+          </li>
         </ul>
-        <form class="d-flex" role="search">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="user/login.php">entrar</a>
-            </li>
-        </form>
       </div>
     </div>
   </nav>
@@ -92,13 +106,14 @@ include "conexa.php";
 
       if ($newRow_01) {
         echo '  <div class="carousel-inner">';
+        echo '<div class="carousel-item active" data-bs-interval="10000">';
         $newRow_01 = false;
+      }else {
+        echo '<div class="carousel-item">';
       }
 
     ?>
-
-
-      <div class="carousel-item active" data-bs-interval="10000">
+     
         <img src="<?php echo $diretorio; ?>" class="d-block w-50" alt="... " id="tam">
         <div class="carousel-caption d-none d-md-block">
           <h5 class="hS"><?php echo $rs->nome_do_produto; ?></h5>
@@ -106,8 +121,6 @@ include "conexa.php";
           <p class="p1"><?php echo $rs->descriao; ?></p>
         </div>
       </div>
-
-
 
       <?php
 
@@ -138,7 +151,7 @@ include "conexa.php";
 
 
 
-
+<div  class="conteiner">
   <?php
   $stmt = $conexao->prepare("SELECT * FROM produtos Order By Rand() Limit 6");
   ($stmt->execute());
@@ -159,7 +172,7 @@ include "conexa.php";
   ?>
     <div class="col">
       <div class="card h-100">
-        <img src="<?php echo $diretorio; ?>" class="card-img-top h-180 w-259" alt="..." >
+        <img src="<?php echo $diretorio; ?>" class="card-img-top h-180 w-259" alt="...">
         <div class="card-body">
           <h5 class="card-title"><?php echo $rs->nome_do_produto; ?></h5>
 
@@ -230,6 +243,7 @@ include "conexa.php";
     </div>
     <!-- modal de compra  -->
   <?php } ?>
+  </div>
   <!-- footer -->
   <br>
   <footer>

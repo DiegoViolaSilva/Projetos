@@ -18,7 +18,8 @@
     width: 500px;
     min-height: 560px;    
     margin: 0px auto;
-    position: relative;   
+    position: relative;  
+    background-color: #ce0000; 
   }
 
   h1{
@@ -147,6 +148,7 @@
 
       body{ 
         width: auto;
-      padding: 30px;}
+        padding: 30px;
+      }
 
       /* Rodapé */
